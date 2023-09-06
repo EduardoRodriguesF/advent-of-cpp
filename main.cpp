@@ -35,27 +35,22 @@ public:
 
 class Rucksack {
 public:
-	std::tuple<std::vector<Item>, std::vector<Item>> compartments;
+	std::vector<Item> items;
 
 	Rucksack(std::string items) {
-		int half_len = items.length() / 2;
-		std::string first_half = items.substr(0, half_len);
-		std::string second_half = items.substr(half_len);
-
-		std::vector<Item> first_compartment;
-		std::vector<Item> second_compartment;
-
-		for (const char letter : first_half) {
+		for (const char letter : items) {
 			auto item = new Item(letter);
-			first_compartment.push_back(*item);
+			this->items.push_back(*item);
 		}
+	}
 
-		for (const char letter : second_half) {
-			auto item = new Item(letter);
-			second_compartment.push_back(*item);
-		}
+	std::tuple<std::vector<Item>, std::vector<Item>> compartments() const {
+		int half_len = this->items.size() / 2;
 
-		this->compartments = std::make_tuple(first_compartment, second_compartment);
+		std::vector<Item> first_compartment(this->items.begin(), this->items.end() - half_len);
+		std::vector<Item> second_compartment(this->items.begin() + half_len, this->items.end());
+
+		return std::make_tuple(first_compartment, second_compartment);
 	}
 };
 
@@ -63,6 +58,7 @@ int main() {
 	std::ifstream file("data.txt");
 
 	int total_priority {};
+	std::vector<Rucksack> rucksacks;
 
 	std::string line;
 	while (std::getline(file, line)) {
@@ -71,7 +67,7 @@ int main() {
 
 		std::vector<Item> first;
 		std::vector<Item> second;
-		std::tie(first, second) = rucksack->compartments;
+		std::tie(first, second) = rucksack->compartments();
 
 		for (const auto first_item : first) {
 			for (const auto second_item : second) {
@@ -84,6 +80,8 @@ int main() {
 		total_priority += std::reduce(similars.begin(), similars.end(), 0, [](int acc, int priority) {
 			return acc + priority;
 		});
+
+		rucksacks.push_back(*rucksack);
 	}
 
 	std::cout << "Total joined priority: " << total_priority << std::endl;
