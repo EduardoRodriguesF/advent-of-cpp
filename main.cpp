@@ -8,6 +8,7 @@
 #include <memory>
 #include <numeric>
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <tuple>
 #include <unordered_map>
@@ -88,6 +89,10 @@ std::optional<Item> find_group_item(Rucksack* a, Rucksack* b, Rucksack* c) {
 int main() {
 	std::ifstream file("data.txt");
 
+	if (!file.is_open()) {
+		throw std::runtime_error("Failed to open file");
+	}
+
 	int total_priority {};
 	int total_group_priority {};
 	std::vector<Rucksack> rucksacks;
@@ -121,4 +126,6 @@ int main() {
 
 	std::cout << "Total joined priority: " << total_priority << std::endl;
 	std::cout << "Total group priority: " << total_group_priority << std::endl;
+
+	file.close();
 }
