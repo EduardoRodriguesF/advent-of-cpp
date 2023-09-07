@@ -51,13 +51,13 @@ public:
 		}
 	}
 
-	std::tuple<std::vector<Item>, std::vector<Item>> compartments() const {
+	std::pair<std::vector<Item>, std::vector<Item>> compartments() const {
 		int half_len = this->items.size() / 2;
 
 		std::vector<Item> first_compartment(this->items.begin(), this->items.end() - half_len);
 		std::vector<Item> second_compartment(this->items.begin() + half_len, this->items.end());
 
-		return std::make_tuple(first_compartment, second_compartment);
+		return std::make_pair(first_compartment, second_compartment);
 	}
 };
 
