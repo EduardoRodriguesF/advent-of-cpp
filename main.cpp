@@ -9,6 +9,7 @@
 #include <optional>
 #include <string>
 #include <tuple>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -61,18 +62,22 @@ public:
 	}
 };
 
-std::optional<const Item*> find_group_item(Rucksack* a, Rucksack* b, Rucksack* c) {
-	for (const Item* a_item : a->items) {
-		for (const Item* b_item : b->items) {
-			if (a_item != b_item) {
-				continue;
-			}
+std::optional<Item> find_group_item(Rucksack* a, Rucksack* b, Rucksack* c) {
+	std::unordered_set<char> a_types, b_types, c_types;
 
-			for (const Item* c_item : c->items) {
-				if (a_item == c_item && c_item == b_item) {
-					return a_item;
-				}
-			}
+	for (const Item* a_item : a->items) {
+		a_types.insert(a_item->letter);
+	}
+	for (const Item* b_item : b->items) {
+		b_types.insert(b_item->letter);
+	}
+	for (const Item* c_item : c->items) {
+		c_types.insert(c_item->letter);
+	}
+
+	for (const char& item : a_types) {
+		if (b_types.count(item) > 0 && c_types.count(item) > 0) {
+			return Item(item);
 		}
 	}
 
@@ -111,7 +116,7 @@ int main() {
 		auto maybe_group_item = find_group_item(&rucksacks[i], &rucksacks[i + 1], &rucksacks[i + 2]);
 
 		if (maybe_group_item.has_value()) {
-			total_group_priority += maybe_group_item.value()->priority();
+			total_group_priority += maybe_group_item.value().priority();
 		}
 	}
 
