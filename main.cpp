@@ -1,17 +1,8 @@
 #include <_ctype.h>
-#include <algorithm>
-#include <array>
-#include <cstddef>
 #include <fstream>
 #include <iostream>
-#include <list>
-#include <memory>
 #include <numeric>
-#include <optional>
-#include <stdexcept>
 #include <string>
-#include <tuple>
-#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
