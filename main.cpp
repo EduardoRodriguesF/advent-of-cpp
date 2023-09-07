@@ -1,6 +1,7 @@
 #include <_ctype.h>
 #include <algorithm>
 #include <array>
+#include <cstddef>
 #include <fstream>
 #include <iostream>
 #include <list>
@@ -31,6 +32,11 @@ public:
 	bool operator==(const Item& rhs) const {
 		return this->letter == rhs.letter;
 	}
+
+	bool operator!=(const Item& rhs) const {
+		return this->letter != rhs.letter;
+	}
+
 };
 
 class Rucksack {
@@ -54,10 +60,29 @@ public:
 	}
 };
 
+Item find_group_item(Rucksack* a, Rucksack* b, Rucksack* c) {
+	for (const Item a_item : a->items) {
+		for (const Item b_item : b->items) {
+			if (a_item != b_item) {
+				continue;
+			}
+
+			for (const Item c_item : c->items) {
+				if (a_item == c_item && c_item == b_item) {
+					return a_item;
+				}
+			}
+		}
+	}
+
+	return NULL;
+}
+
 int main() {
 	std::ifstream file("data.txt");
 
 	int total_priority {};
+	int total_group_priority {};
 	std::vector<Rucksack> rucksacks;
 
 	std::string line;
@@ -84,5 +109,11 @@ int main() {
 		rucksacks.push_back(*rucksack);
 	}
 
+	for (int i = 0; i < rucksacks.size() - 2; i += 3) {
+		Item group_item = find_group_item(&rucksacks[i], &rucksacks[i + 1], &rucksacks[i + 2]);
+		total_group_priority += group_item.priority();
+	}
+
 	std::cout << "Total joined priority: " << total_priority << std::endl;
+	std::cout << "Total group priority: " << total_group_priority << std::endl;
 }
