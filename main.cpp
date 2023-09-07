@@ -6,6 +6,7 @@
 #include <iostream>
 #include <list>
 #include <numeric>
+#include <optional>
 #include <string>
 #include <tuple>
 #include <unordered_set>
@@ -60,7 +61,7 @@ public:
 	}
 };
 
-Item find_group_item(Rucksack* a, Rucksack* b, Rucksack* c) {
+std::optional<Item> find_group_item(Rucksack* a, Rucksack* b, Rucksack* c) {
 	for (const Item a_item : a->items) {
 		for (const Item b_item : b->items) {
 			if (a_item != b_item) {
@@ -75,7 +76,7 @@ Item find_group_item(Rucksack* a, Rucksack* b, Rucksack* c) {
 		}
 	}
 
-	return NULL;
+	return {};
 }
 
 int main() {
@@ -110,8 +111,11 @@ int main() {
 	}
 
 	for (int i = 0; i < rucksacks.size() - 2; i += 3) {
-		Item group_item = find_group_item(&rucksacks[i], &rucksacks[i + 1], &rucksacks[i + 2]);
-		total_group_priority += group_item.priority();
+		auto maybe_group_item = find_group_item(&rucksacks[i], &rucksacks[i + 1], &rucksacks[i + 2]);
+
+		if (maybe_group_item.has_value()) {
+			total_group_priority += maybe_group_item->priority();
+		}
 	}
 
 	std::cout << "Total joined priority: " << total_priority << std::endl;
