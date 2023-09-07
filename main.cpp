@@ -103,10 +103,7 @@ int main() {
 			}
 		}
 
-		total_priority += std::reduce(similars.begin(), similars.end(), 0, [](int acc, int priority) {
-			return acc + priority;
-		});
-
+		total_priority += std::accumulate(similars.begin(), similars.end(), 0);
 		rucksacks.push_back(*rucksack);
 	}
 
