@@ -42,33 +42,33 @@ public:
 
 class Rucksack {
 public:
-	std::vector<Item> items;
+	std::vector<Item*> items;
 
 	Rucksack(std::string items) {
 		for (const char letter : items) {
 			auto item = new Item(letter);
-			this->items.push_back(*item);
+			this->items.push_back(item);
 		}
 	}
 
-	std::pair<std::vector<Item>, std::vector<Item>> compartments() const {
+	std::pair<std::vector<Item*>, std::vector<Item*>> compartments() const {
 		int half_len = this->items.size() / 2;
 
-		std::vector<Item> first_compartment(this->items.begin(), this->items.end() - half_len);
-		std::vector<Item> second_compartment(this->items.begin() + half_len, this->items.end());
+		std::vector<Item*> first_compartment(this->items.begin(), this->items.end() - half_len);
+		std::vector<Item*> second_compartment(this->items.begin() + half_len, this->items.end());
 
 		return std::make_pair(first_compartment, second_compartment);
 	}
 };
 
-std::optional<Item> find_group_item(Rucksack* a, Rucksack* b, Rucksack* c) {
-	for (const Item a_item : a->items) {
-		for (const Item b_item : b->items) {
+std::optional<const Item*> find_group_item(Rucksack* a, Rucksack* b, Rucksack* c) {
+	for (const Item* a_item : a->items) {
+		for (const Item* b_item : b->items) {
 			if (a_item != b_item) {
 				continue;
 			}
 
-			for (const Item c_item : c->items) {
+			for (const Item* c_item : c->items) {
 				if (a_item == c_item && c_item == b_item) {
 					return a_item;
 				}
@@ -91,14 +91,14 @@ int main() {
 		std::unordered_set<int> similars;
 		Rucksack* rucksack = new Rucksack(line);
 
-		std::vector<Item> first;
-		std::vector<Item> second;
+		std::vector<Item*> first;
+		std::vector<Item*> second;
 		std::tie(first, second) = rucksack->compartments();
 
 		for (const auto first_item : first) {
 			for (const auto second_item : second) {
 				if (first_item == second_item) {
-					similars.insert(first_item.priority());
+					similars.insert(first_item->priority());
 				}
 			}
 		}
@@ -111,7 +111,7 @@ int main() {
 		auto maybe_group_item = find_group_item(&rucksacks[i], &rucksacks[i + 1], &rucksacks[i + 2]);
 
 		if (maybe_group_item.has_value()) {
-			total_group_priority += maybe_group_item->priority();
+			total_group_priority += maybe_group_item.value()->priority();
 		}
 	}
 
