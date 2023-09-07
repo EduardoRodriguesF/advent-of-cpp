@@ -6,9 +6,9 @@
 #include <iostream>
 #include <list>
 #include <numeric>
-#include <set>
 #include <string>
 #include <tuple>
+#include <unordered_set>
 #include <vector>
 
 const int NUM = 31;
@@ -87,7 +87,7 @@ int main() {
 
 	std::string line;
 	while (std::getline(file, line)) {
-		std::set<int> similars;
+		std::unordered_set<int> similars;
 		Rucksack* rucksack = new Rucksack(line);
 
 		std::vector<Item> first;
