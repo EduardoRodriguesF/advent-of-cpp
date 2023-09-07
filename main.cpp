@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <list>
+#include <memory>
 #include <numeric>
 #include <optional>
 #include <string>
@@ -43,20 +44,20 @@ public:
 
 class Rucksack {
 public:
-	std::vector<Item*> items;
+	std::vector<std::shared_ptr<Item>> items;
 
 	Rucksack(std::string items) {
 		for (const char letter : items) {
-			auto item = new Item(letter);
-			this->items.push_back(item);
+			auto item = std::make_unique<Item>(letter);
+			this->items.push_back(std::move(item));
 		}
 	}
 
-	std::pair<std::vector<Item*>, std::vector<Item*>> compartments() const {
+	std::pair<std::vector<std::shared_ptr<Item>>, std::vector<std::shared_ptr<Item>>> compartments() const {
 		int half_len = this->items.size() / 2;
 
-		std::vector<Item*> first_compartment(this->items.begin(), this->items.end() - half_len);
-		std::vector<Item*> second_compartment(this->items.begin() + half_len, this->items.end());
+		std::vector<std::shared_ptr<Item>> first_compartment(this->items.begin(), this->items.end() - half_len);
+		std::vector<std::shared_ptr<Item>> second_compartment(this->items.begin() + half_len, this->items.end());
 
 		return std::make_pair(first_compartment, second_compartment);
 	}
@@ -65,13 +66,13 @@ public:
 std::optional<Item> find_group_item(Rucksack* a, Rucksack* b, Rucksack* c) {
 	std::unordered_set<char> a_types, b_types, c_types;
 
-	for (const Item* a_item : a->items) {
+	for (const auto a_item : a->items) {
 		a_types.insert(a_item->letter);
 	}
-	for (const Item* b_item : b->items) {
+	for (const auto b_item : b->items) {
 		b_types.insert(b_item->letter);
 	}
-	for (const Item* c_item : c->items) {
+	for (const auto c_item : c->items) {
 		c_types.insert(c_item->letter);
 	}
 
@@ -94,22 +95,20 @@ int main() {
 	std::string line;
 	while (std::getline(file, line)) {
 		std::unordered_set<int> similars;
-		Rucksack* rucksack = new Rucksack(line);
+		auto rucksack = std::make_unique<Rucksack>(line);
 
-		std::vector<Item*> first;
-		std::vector<Item*> second;
-		std::tie(first, second) = rucksack->compartments();
+		auto compartments = rucksack->compartments();
 
-		for (const auto first_item : first) {
-			for (const auto second_item : second) {
-				if (first_item == second_item) {
+		for (const auto first_item : compartments.first) {
+			for (const auto second_item : compartments.second) {
+				if (*first_item == *second_item) {
 					similars.insert(first_item->priority());
 				}
 			}
 		}
 
 		total_priority += std::accumulate(similars.begin(), similars.end(), 0);
-		rucksacks.push_back(*rucksack);
+		rucksacks.push_back(std::move(*rucksack));
 	}
 
 	for (int i = 0; i < rucksacks.size() - 2; i += 3) {
