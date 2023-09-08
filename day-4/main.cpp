@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -24,21 +25,29 @@ int main() {
 	}
 
 	string line;
-	int count = 0;
+	int duplicate_count = 0, overlap_count = 0;
 	while (getline(file, line)) {
 		auto group = split_once(line, ',');
 
 		list<int> pivot = resolve_elf_range(group.first);
 		list<int> other = resolve_elf_range(group.second);
 
-		if (pivot.size() > other.size()) swap(pivot, other);
+		if (pivot.size() > other.size()) swap(pivot, other); // The smallest range is used as pivot
 
 		if (pivot.front() >= other.front() && pivot.back() <= other.back()) {
-			count++;
+			duplicate_count++;
+		}
+
+		for (const int& item : pivot) {
+			if (find(other.begin(), other.end(), item) != other.end()) {
+				overlap_count++;
+				break;
+			}
 		}
 	}
 
-	cout << "A total of " << count << " includes the range of each other." << endl;
+	cout << "Duplicate: " << duplicate_count << endl;
+	cout << "Overlaps: " << overlap_count << endl;
 
 	return 0;
 }
