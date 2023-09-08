@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <vector>
 using namespace std;
 
-list<int> range(const int start, const int end);
+vector<int> range(const int start, const int end);

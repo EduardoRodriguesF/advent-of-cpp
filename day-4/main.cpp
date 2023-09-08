@@ -2,19 +2,18 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
-#include <list>
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <vector>
 #include "split.h"
 #include "range.h"
 using namespace std;
 
-list<int> resolve_elf_range(const string& line) {
+vector<int> resolve_elf_range(const string& line) {
 	auto splitted = split_once(line, '-');
-	pair<int, int> sections = make_pair(stoi(splitted.first), stoi(splitted.second));
 
-	return range(sections.first, sections.second);
+	return range(stoi(splitted.first), stoi(splitted.second));
 }
 
 int main() {
@@ -29,8 +28,8 @@ int main() {
 	while (getline(file, line)) {
 		auto group = split_once(line, ',');
 
-		list<int> pivot = resolve_elf_range(group.first);
-		list<int> other = resolve_elf_range(group.second);
+		vector<int> pivot = resolve_elf_range(group.first);
+		vector<int> other = resolve_elf_range(group.second);
 
 		if (pivot.size() > other.size()) swap(pivot, other); // The smallest range is used as pivot
 
@@ -39,7 +38,7 @@ int main() {
 		}
 
 		for (const int& item : pivot) {
-			if (find(other.begin(), other.end(), item) != other.end()) {
+			if (count(other.begin(), other.end(), item) > 0) {
 				overlap_count++;
 				break;
 			}
