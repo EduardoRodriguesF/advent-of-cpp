@@ -1,8 +1,8 @@
 #include "split.h"
 
-vector<string> split(const string &str, const char &separator) {
-	vector<string> result;
-	string entry;
+std::vector<std::string> split(const std::string &str, const char &separator) {
+	std::vector<std::string> result;
+	std::string entry;
 
 	for (int i = 0; i <= str.size(); i++) {
 		char c = str[i];

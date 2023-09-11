@@ -7,15 +7,14 @@
 #include <stack>
 #include <string>
 #include <vector>
-using namespace std;
 
 class CrateMover {
 protected:
-	stack<char>* from;
-	stack<char>* to;
+	std::stack<char>* from;
+	std::stack<char>* to;
 
 public:
-	CrateMover(stack<char>* from_ptr, stack<char>* to_ptr) {
+	CrateMover(std::stack<char>* from_ptr, std::stack<char>* to_ptr) {
 		this->from = from_ptr;
 		this->to = to_ptr;
 	}
@@ -35,7 +34,7 @@ public:
 	using CrateMover::CrateMover;
 
 	void move(int count) override {
-		stack<char> aux;
+		std::stack<char> aux;
 
 		while (count > 0 && !from->empty()) {
 			aux.push(this->from->top());
@@ -52,16 +51,16 @@ public:
 };
 
 int main() {
-	vector<stack<char>> supplies(9);
+	std::vector<std::stack<char>> supplies(9);
 
-	ifstream file("data.txt");
+	std::ifstream file("data.txt");
 
 	if (!file.is_open()) {
-		throw runtime_error("Failed to open file");
+		throw std::runtime_error("Failed to open file");
 	}
 
-	string line;
-	stack<string> initial_supplies;
+	std::string line;
+	std::stack<std::string> initial_supplies;
 	// Organizes stack
 	while (getline(file, line)) {
 		if (empty(line)) {
@@ -73,7 +72,7 @@ int main() {
 	}
 
 
-	string supply_line;
+	std::string supply_line;
 	while (!initial_supplies.empty()) {
 		supply_line = initial_supplies.top();
 
@@ -94,12 +93,12 @@ int main() {
 
 	// Follow instructions
 	while (getline(file, line)) {
-		vector<string> words = split(line, ' ');
+		std::vector<std::string> words = split(line, ' ');
 
 		int from = stoi(words[3]) - 1; // Count starts at 1
 		int to = stoi(words[5]) - 1;
 
-		auto crate_mover = make_unique<CrateMover9001>(&supplies[from], &supplies[to]);
+		auto crate_mover = std::make_unique<CrateMover9001>(&supplies[from], &supplies[to]);
 		int move_count = stoi(words[1]);
 
 		crate_mover->move(move_count);
@@ -107,9 +106,9 @@ int main() {
 
 
 	for (auto st : supplies) {
-		cout << st.top();
+		std::cout << st.top();
 	}
-	cout << endl;
+	std::cout << std::endl;
 
 	return 0;
 }
