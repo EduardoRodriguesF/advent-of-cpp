@@ -9,23 +9,44 @@
 #include <vector>
 using namespace std;
 
-class Action {
-private:
+class CrateMover {
+protected:
 	stack<char>* from;
 	stack<char>* to;
 
 public:
-	Action(stack<char>* from_ptr, stack<char>* to_ptr) {
+	CrateMover(stack<char>* from_ptr, stack<char>* to_ptr) {
 		this->from = from_ptr;
 		this->to = to_ptr;
 	}
 
-	void move(int count) {
+	virtual void move(int count) {
 		while (count > 0 && !from->empty()) {
-			to->push(from->top());
+			this->to->push(this->from->top());
 
 			count--;
-			from->pop();
+			this->from->pop();
+		}
+	}
+};
+
+class CrateMover9001 : public CrateMover {
+public:
+	using CrateMover::CrateMover;
+
+	void move(int count) override {
+		stack<char> aux;
+
+		while (count > 0 && !from->empty()) {
+			aux.push(this->from->top());
+
+			count--;
+			this->from->pop();
+		}
+
+		while (!aux.empty()) {
+			this->to->push(aux.top());
+			aux.pop();
 		}
 	}
 };
@@ -78,10 +99,10 @@ int main() {
 		int from = stoi(words[3]) - 1; // Count starts at 1
 		int to = stoi(words[5]) - 1;
 
-		auto action = make_unique<Action>(&supplies[from], &supplies[to]);
+		auto crate_mover = make_unique<CrateMover9001>(&supplies[from], &supplies[to]);
 		int move_count = stoi(words[1]);
 
-		action->move(move_count);
+		crate_mover->move(move_count);
 	}
 
 
