@@ -44,14 +44,14 @@ void print_recursive_dir(size_t lvl, Dir dir) {
 		for (size_t i = 0; i < lvl; i++) {
 			std::cout << "  ";
 		} 
-		std::cout << path << " (" << file->size << ")" << std::endl;
+		std::cout << "file " << path << " (size=" << file->size << ")" << std::endl;
 	}
 
 	for (const auto &[path, d] : dir.dirs) {
 		for (size_t i = 0; i < lvl; i++) {
 			std::cout << "  ";
 		} 
-		std::cout << path << std::endl;
+		std::cout << path << " (" << d->size() << ")" << std::endl;
 
 		print_recursive_dir(lvl + 1, *d);
 	}
