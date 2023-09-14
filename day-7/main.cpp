@@ -18,7 +18,6 @@ int total_dir_size(const FileSystem &fs, int max_size) {
 
 			if (size <= max_size) {
 				result += size;
-				continue;
 			}
 
 			for (const auto &[_, next_dir] : dir->dirs) {
