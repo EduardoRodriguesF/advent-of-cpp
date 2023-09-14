@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <map>
+#include <utility>
 #include <vector>
 
 struct File {
@@ -14,6 +15,12 @@ struct Dir {
 	std::string name;
 	std::map<std::string, std::shared_ptr<File>> files;
 	std::map<std::string, std::shared_ptr<Dir>> dirs;
+
+	// Sum of file sizes directly stored in this `Dir`
+	int files_size() const;
+
+	// Recursive `Dir` size
+	int size() const;
 };
 
 class FileSystem {

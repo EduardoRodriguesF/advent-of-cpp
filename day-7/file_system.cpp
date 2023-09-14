@@ -1,8 +1,12 @@
 #include "file_system.h"
 #include <cstdio>
 #include <cstdlib>
+#include <functional>
 #include <iostream>
+#include <map>
 #include <memory>
+#include <numeric>
+#include <utility>
 
 std::shared_ptr<Dir> FileSystem::home() const {
 	return this->home_dir;
@@ -55,4 +59,22 @@ void print_recursive_dir(size_t lvl, Dir dir) {
 
 void FileSystem::print() const {
 	print_recursive_dir(0, *this->home());
+}
+
+int Dir::files_size() const {
+	using namespace std;
+
+	return  reduce(this->files.begin(), this->files.end(), 0, [](int total, const pair<string, shared_ptr<File>> &k) {
+		return total + k.second->size;
+	});
+}
+
+int Dir::size() const {
+	int result = this->files_size();
+
+	for (const auto &[_, dir] : this->dirs) {
+		result += dir->size();
+	}
+
+	return result;
 }

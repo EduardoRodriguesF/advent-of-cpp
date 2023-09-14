@@ -54,5 +54,5 @@ int main() {
 		}
 	}
 
-	fs.print();
+	std::cout << fs.home()->size() << std::endl;
 }
