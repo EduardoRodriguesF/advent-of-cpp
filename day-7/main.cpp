@@ -6,6 +6,11 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <utility>
+#include <vector>
+
+constexpr int DISK_SPACE = 70000000;
+constexpr int TARGET_FREE_SPACE = 30000000;
 
 int total_dir_size(const FileSystem &fs, int max_size) {
 	int result = 0;
@@ -30,6 +35,37 @@ int total_dir_size(const FileSystem &fs, int max_size) {
 	}
 
 	return result;
+}
+
+int find_smallest_to_free(const FileSystem &fs) {
+	int unused_space = DISK_SPACE - fs.home()->size();
+	int min_size = TARGET_FREE_SPACE - unused_space;
+	int smallest = DISK_SPACE;
+
+	std::cout << "Disk:   " << DISK_SPACE << "\n";
+	std::cout << "unused: " << unused_space << "\n";
+
+	std::vector<std::shared_ptr<Dir>> candidates { fs.home() };
+	std::vector<std::shared_ptr<Dir>> next_candidates;
+
+	while (!candidates.empty()) {
+		for (const auto &dir : candidates) {
+			int size = dir->size();
+
+			if (size < smallest && size >= min_size) {
+				smallest = size;
+			}
+
+			for (const auto &[_, next_dir] : dir->dirs) {
+				next_candidates.push_back(next_dir);
+			}
+		}
+
+		candidates.swap(next_candidates);
+		next_candidates.clear();
+	}
+
+	return smallest;
 }
 
 int main() {
@@ -80,5 +116,5 @@ int main() {
 		}
 	}
 
-	std::cout << total_dir_size(fs, 100000) << std::endl;
+	std::cout << find_smallest_to_free(fs) << std::endl;
 }
