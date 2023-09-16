@@ -51,9 +51,9 @@ int main() {
 		throw std::runtime_error("Failed to open file");
 	}
 
-	std::unique_ptr<Grid> map = std::make_unique<Grid>(file);
+	Grid map(file);
 
-	std::cout << total_visible_trees(*map) << std::endl;
+	std::cout << total_visible_trees(map) << std::endl;
 
 	return 0;
 }

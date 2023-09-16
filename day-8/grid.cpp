@@ -9,12 +9,13 @@
 Grid::Grid(std::ifstream &file) {
 	std::string line;
 
-	size_t x = 0, y = 0;
+	size_t y = 0;
 	while (std::getline(file, line)) {
 		std::vector<std::unique_ptr<GridCell>> row;
 		std::istringstream ss(line);
 		char tree;
 
+		size_t x = 0;
 		while (ss >> tree) {
 			auto cell = GridCell(*this);
 
@@ -31,7 +32,7 @@ Grid::Grid(std::ifstream &file) {
 }
 
 std::optional<GridCell *> Grid::at(size_t x, size_t y) const {
-	if (y > this->data.size() - 1 || x > this->data[y].size()) {
+	if (y >= this->data.size() || x >= this->data[y].size()) {
 		return std::nullopt;
 	}
 
