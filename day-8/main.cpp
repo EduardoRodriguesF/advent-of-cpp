@@ -13,10 +13,10 @@ size_t total_visible_trees(const Grid &map) {
 
 	for (size_t x = 0; x < x_size; x++) {
 		for (size_t y = 0; y < y_size; y++) {
-			auto cell = map.at(x, y);
+			auto cell = map.at(x, y).value();
 			auto direct_neighbors = cell->direct_neighbors_list();
 
-			bool is_sorrounded = std::all_of(direct_neighbors.begin(), direct_neighbors.end(), [](std::optional<GridCell> cell) {
+			bool is_sorrounded = std::all_of(direct_neighbors.begin(), direct_neighbors.end(), [](std::optional<GridCell *> cell) {
 				return cell.has_value();
 			});
 
@@ -28,8 +28,8 @@ size_t total_visible_trees(const Grid &map) {
 			auto adjacents = cell->adjacent_neighbors();
 
 			for (const auto &neighbors : adjacents) {
-				bool is_visible = std::all_of(neighbors.begin(), neighbors.end(), [cell](GridCell neighbor) {
-					return neighbor.height < cell->height;
+				bool is_visible = std::all_of(neighbors.begin(), neighbors.end(), [cell](GridCell *neighbor) {
+					return neighbor->height < cell->height;
 				});
 
 				if (is_visible) {

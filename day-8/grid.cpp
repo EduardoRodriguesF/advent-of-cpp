@@ -9,55 +9,53 @@
 Grid::Grid(std::ifstream &file) {
 	std::string line;
 
+	size_t x = 0, y = 0;
 	while (std::getline(file, line)) {
-		std::vector<int> row;
+		std::vector<std::unique_ptr<GridCell>> row;
 		std::istringstream ss(line);
 		char tree;
 
 		while (ss >> tree) {
-			row.push_back(tree - '0'); // converted to int
+			auto cell = GridCell(*this);
+
+			cell.pos = Pos { x, y };
+			cell.height = tree - '0'; // converted to int
+
+			row.push_back(std::make_unique<GridCell>(cell));
+			x++;
 		}
 
-		this->data.push_back(row);
+		this->data.push_back(std::move(row));
+		y++;
 	}
 }
 
-std::optional<GridCell> Grid::at(size_t x, size_t y) const {
-	return this->at(Pos { x, y });
-}
-
-std::optional<GridCell> Grid::at(Pos pos) const {
-	if (pos.y > this->data.size() - 1 || pos.x > this->data[pos.y].size()) {
+std::optional<GridCell *> Grid::at(size_t x, size_t y) const {
+	if (y > this->data.size() - 1 || x > this->data[y].size()) {
 		return std::nullopt;
 	}
 
-	GridCell cell;
-
-	cell.parent = std::make_shared<Grid>(*this);
-	cell.pos = pos;
-	cell.height = this->data[pos.y][pos.x];
-
-	return cell;
+	return this->data[y][x].get();
 }
 
 CellNeighbors GridCell::direct_neighbors() const {
 	CellNeighbors result;
 
 	if (this->pos.y > 0) {
-		result.top = this->parent->at(pos.x, pos.y - 1);
+		result.top = this->parent.at(pos.x, pos.y - 1);
 	}
 
 	if (this->pos.x > 0) {
-		result.left = this->parent->at(pos.x - 1, pos.y);
+		result.left = this->parent.at(pos.x - 1, pos.y);
 	}
 
-	result.bottom = this->parent->at(pos.x, pos.y + 1);
-	result.right = this->parent->at(pos.x + 1, pos.y);
+	result.bottom = this->parent.at(pos.x, pos.y + 1);
+	result.right = this->parent.at(pos.x + 1, pos.y);
 
 	return result;
 }
 
-std::vector<std::optional<GridCell>> GridCell::direct_neighbors_list() const {
+std::vector<std::optional<GridCell *>> GridCell::direct_neighbors_list() const {
 	auto neighbors = this->direct_neighbors();
 
 	return {
@@ -68,11 +66,11 @@ std::vector<std::optional<GridCell>> GridCell::direct_neighbors_list() const {
 	};
 }
 
-std::vector<std::vector<GridCell>> GridCell::adjacent_neighbors() const {
-	std::vector<std::vector<GridCell>> result(4);
+std::vector<std::vector<GridCell *>> GridCell::adjacent_neighbors() const {
+	std::vector<std::vector<GridCell *>> result(4);
 
 	for (size_t ny = this->pos.y - 1; ny >= 0; ny--) {
-		auto node = this->parent->at(this->pos.x, ny);
+		auto node = this->parent.at(this->pos.x, ny);
 		if (!node.has_value()) {
 			break;
 		}
@@ -80,8 +78,8 @@ std::vector<std::vector<GridCell>> GridCell::adjacent_neighbors() const {
 		result[Direction::Top].push_back(node.value());
 	}
 
-	for (size_t nx = this->pos.x + 1; nx < this->parent->sizes().first; nx++) {
-		auto node = this->parent->at(nx, this->pos.y);
+	for (size_t nx = this->pos.x + 1; nx < this->parent.sizes().first; nx++) {
+		auto node = this->parent.at(nx, this->pos.y);
 		if (!node.has_value()) {
 			break;
 		}
@@ -89,8 +87,8 @@ std::vector<std::vector<GridCell>> GridCell::adjacent_neighbors() const {
 		result[Direction::Right].push_back(node.value());
 	}
 
-	for (size_t ny = this->pos.y + 1; ny < this->parent->sizes().second; ny++) {
-		auto node = this->parent->at(this->pos.x, ny);
+	for (size_t ny = this->pos.y + 1; ny < this->parent.sizes().second; ny++) {
+		auto node = this->parent.at(this->pos.x, ny);
 		if (!node.has_value()) {
 			break;
 		}
@@ -99,7 +97,7 @@ std::vector<std::vector<GridCell>> GridCell::adjacent_neighbors() const {
 	}
 
 	for (size_t nx = this->pos.x - 1; nx >= 0; nx--) {
-		auto node = this->parent->at(nx, this->pos.y);
+		auto node = this->parent.at(nx, this->pos.y);
 		if (!node.has_value()) {
 			break;
 		}
