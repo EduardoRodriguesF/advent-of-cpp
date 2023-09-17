@@ -32,6 +32,8 @@ struct GridCell {
 	std::vector<std::optional<GridCell *>> direct_neighbors_list() const;
 
 	std::vector<std::vector<GridCell *>> adjacent_neighbors() const;
+
+	size_t scenetic_score() const;
 };
 
 struct CellNeighbors {

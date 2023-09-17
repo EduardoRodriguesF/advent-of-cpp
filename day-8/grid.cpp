@@ -1,5 +1,8 @@
 #include "grid.h"
+#include <algorithm>
+#include <functional>
 #include <memory>
+#include <numeric>
 #include <optional>
 #include <sstream>
 #include <string>
@@ -107,6 +110,27 @@ std::vector<std::vector<GridCell *>> GridCell::adjacent_neighbors() const {
 	}
 
 	return result;
+}
+
+size_t GridCell::scenetic_score() const {
+	auto directions = this->adjacent_neighbors();
+	std::vector<size_t> scores(directions.size());
+
+	std::transform(directions.begin(), directions.end(), scores.begin(), [this](std::vector<GridCell *> neighbors) {
+		size_t score = 0;
+
+		for (const auto &neighbor : neighbors) {
+			score++;
+
+			if (neighbor->height >= this->height) {
+				break;
+			}
+		}
+
+		return score;
+	});
+
+	return std::accumulate(scores.begin(), scores.end(), 1, std::multiplies<size_t>{});
 }
 
 std::pair<size_t, size_t> Grid::sizes() const {
