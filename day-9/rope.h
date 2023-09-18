@@ -1,17 +1,18 @@
 #pragma once
 
 #include "coords.h"
+#include <vector>
 
 class Rope {
 public:
-	Pos get_head() const;
-	Pos get_tail() const;
+	Pos head() const;
+	Pos tail() const;
+	std::vector<Pos> get_knots() const;
 
-	Rope(int x, int y) : head(x, y), tail(x, y) {};
+	Rope(size_t length);
 
 	void move(Direction direction);
 
 private:
-	Pos head;
-	Pos tail;
+	std::vector<Pos> knots;
 };
