@@ -1,6 +1,6 @@
 #include "coords/coords.h"
 #include "rope.h"
-#include "split.h"
+#include "split/split.h"
 #include <chrono>
 #include <cstdlib>
 #include <fstream>
