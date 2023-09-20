@@ -2,3 +2,5 @@
 *.out.dSYM
 build
 bin
+compile_commands.json
+.cache

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "coords.h"
+#include "coords/coords.h"
 #include <vector>
 
 class Rope {

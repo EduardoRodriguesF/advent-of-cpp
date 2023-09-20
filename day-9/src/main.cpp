@@ -1,4 +1,4 @@
-#include "coords.h"
+#include "coords/coords.h"
 #include "rope.h"
 #include "split.h"
 #include <chrono>
