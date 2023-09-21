@@ -1,14 +1,20 @@
 cmake_minimum_required(VERSION 3.27)
 
-project(RopePhysics)
+project(coords_test)
 
-set(SRC_DIR "${CMAKE_CURRENT_LIST_DIR}/src")
-set(SOURCES "${SRC_DIR}/main.cpp" "${SRC_DIR}/coords.cpp" "${SRC_DIR}/split.cpp"  "${SRC_DIR}/rope.cpp")
+find_package(GTest CONFIG REQUIRED)
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+enable_testing()
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 20
-    CXX_STANDARD_REQUIRED ON
-    CXX_EXTENSIONS OFF
+add_executable(
+  coords_test
+  coords_test.cpp
 )
+target_link_libraries(
+  coords_test
+  GTest::gtest
+  coords
+)
+
+include(GoogleTest)
+gtest_discover_tests(coords_test)
