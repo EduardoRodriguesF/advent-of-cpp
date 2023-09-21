@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include "gtest/gtest.h"
 #include "coords/coords.h"
 
 TEST(CoordsTest, Add) {
